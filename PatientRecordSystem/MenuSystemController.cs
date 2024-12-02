@@ -65,46 +65,13 @@ namespace PatientRecordSystem
                     case "1":
                         Console.Clear();
                         Console.WriteLine(new string('-', 50));
-                        Console.WriteLine("ADD PATIENT");
-                        Console.WriteLine(new string('-', 50));
-                        var patientService = new PatientService();
-
-                        Console.Write("Enter First Name: ");
-                        string firstName = Console.ReadLine();
-
-                        Console.Write("Enter Last Name: ");
-                        string lastName = Console.ReadLine();
-
-                        Console.Write("Enter Date of Birth (yyyy-mm-dd): ");
-                        if (!DateTime.TryParse(Console.ReadLine(), out DateTime dateOfBirth))
-                        {
-                            Console.WriteLine("Invalid date format. Please enter the date in yyyy-mm-dd format.");
-                            break;
-                        }
-
-                        Console.Write("Enter Contact Details: ");
-                        string contactDetails = Console.ReadLine();
-
-                        Console.Write("Enter NHS Number: ");
-                        string nhsNumber = Console.ReadLine();
-
-                        string hospitalNumber = patientService.GenerateHospitalNumber();
-
-                        var newPatient = patientService.CreatePatient(firstName, lastName, dateOfBirth, contactDetails, nhsNumber, hospitalNumber);
-
-                        Console.WriteLine($"\nPatient {newPatient.FirstName} {newPatient.LastName} created with Hospital Number: {newPatient.HospitalNumber}");
-                        break;
-
-                    case "2":
-                        Console.Clear();
-                        Console.WriteLine(new string('-', 50));
                         Console.WriteLine("LIST PATIENTS");
                         Console.WriteLine(new string('-', 50));
                         PatientManager.ListAllPatients();
                         break;
 
 
-                    case "3":
+                    case "2":
                         Console.Clear();
                         Console.WriteLine(new string('-', 50));
                         Console.WriteLine("SEARCH PATIENT");
@@ -182,7 +149,7 @@ namespace PatientRecordSystem
                         }
                         break;
 
-                    case "4":
+                    case "3":
                         while (true)
                         {
                             Console.Clear();
@@ -246,58 +213,142 @@ namespace PatientRecordSystem
                         }
                         break;
 
-                    case "5":
-                        Console.WriteLine("\nSelect an option:");
-                        Console.WriteLine("1. Schedule Appointment");
-                        Console.WriteLine("2. Cancel Appointment");
-                        string subChoice = Console.ReadLine();
+                    case "4":
+                        Console.Clear();
+                        Console.WriteLine(new string('-', 50));
+                        Console.WriteLine("MANAGE APPOINTMENTS");
+                        Console.WriteLine(new string('-', 50));
+                        Console.WriteLine("1. Add Doctor");
+                        Console.WriteLine("2. Add Patient");
+                        Console.WriteLine("3. Schedule Appointment");
+                        Console.WriteLine("4. List Appointments");
+                        Console.WriteLine("5. Cancel Appointment");
+                        Console.WriteLine("6. Exit");
+                        Console.Write("Select an option: ");
 
-                        switch (subChoice)
+                        string appointmentChoice = Console.ReadLine();
+
+                        switch (appointmentChoice)
                         {
-                            case "1":
-                                var nhsForAppointment = PromptForNHSNumber();
-                                var appointmentDate = PromptForDate("Enter Appointment Date (yyyy-MM-dd HH:mm): ");
-                                Console.Write("Enter Doctor's Name: ");
-                                string doctor = Console.ReadLine();
-                                Console.Write("Enter Department: ");
-                                string department = Console.ReadLine();
-                                Console.Write("Enter Notes: ");
-                                string notes = Console.ReadLine();
-
-                                try
+                            case "1": // Add Doctor
+                                Console.Write("Enter Doctor ID: ");
+                                if (int.TryParse(Console.ReadLine(), out int doctorId))
                                 {
-                                    var appointment = new Appointment
-                                    {
-                                        AppointmentDate = appointmentDate,
-                                        DoctorName = doctor,
-                                        Department = department,
-                                        AppointmentCancelled = false
-                                    };
-                                    PatientManager.AddAppointment(nhsForAppointment, appointment);
-                                    Console.WriteLine("Appointment added successfully.");
+                                    Console.Write("Enter Doctor Name: ");
+                                    string name = Console.ReadLine();
+                                    DoctorManager.Add(new Doctor { DoctorID = doctorId, Name = name });
+                                    Console.WriteLine("Doctor added successfully.");
                                 }
-                                catch (Exception ex)
+                                else
                                 {
-                                    Console.WriteLine($"Error adding appointment: {ex.Message}");
+                                    Console.WriteLine("Invalid ID. Doctor not added.");
                                 }
+                                Console.WriteLine("Press any key to return to the menu.");
+                                Console.ReadKey();
                                 break;
 
-                            case "2":
-                                var nhsForCancel = PromptForNHSNumber();
-                                var cancelDate = PromptForDate("Enter Appointment Date to Cancel (yyyy-MM-dd HH:mm): ");
-                                try
+                            case "2": // Add Patient
+                                Console.Write("Enter Patient ID: ");
+                                if (int.TryParse(Console.ReadLine(), out int patientId))
                                 {
-                                    Console.WriteLine("Appointment cancelled successfully.");
+                                    Console.Write("Enter Patient Name: ");
+                                    string patientName = Console.ReadLine();
+                                    Patient.Add(new Patient { PatientID = patientId });
+                                    Console.WriteLine("Patient added successfully.");
                                 }
-                                catch (Exception ex)
+                                else
                                 {
-                                    Console.WriteLine($"Error cancelling appointment: {ex.Message}");
+                                    Console.WriteLine("Invalid ID. Patient not added.");
                                 }
+                                Console.WriteLine("Press any key to return to the menu.");
+                                Console.ReadKey();
+                                break;
+
+                            case "3": // Schedule Appointment
+                                Console.Write("Enter Doctor ID: ");
+                                while (!int.TryParse(Console.ReadLine(), out doctorId))
+                                {
+                                    Console.WriteLine("Invalid input. Please enter a valid Doctor ID.");
+                                }
+
+                                Console.Write("Enter Patient ID: ");
+                                while (!int.TryParse(Console.ReadLine(), out patientId))
+                                {
+                                    Console.WriteLine("Invalid input. Please enter a valid Patient ID.");
+                                }
+
+                                Console.Write("Enter Start Time (yyyy-MM-dd HH:mm): ");
+                                DateTime startTime;
+                                while (!DateTime.TryParse(Console.ReadLine(), out startTime))
+                                {
+                                    Console.WriteLine("Invalid input. Please enter a valid date and time.");
+                                }
+
+                                Console.Write("Enter End Time (yyyy-MM-dd HH:mm): ");
+                                DateTime endTime;
+                                while (!DateTime.TryParse(Console.ReadLine(), out endTime))
+                                {
+                                    Console.WriteLine("Invalid input. Please enter a valid date and time.");
+                                }
+
+                                AppointmentScheduler.ScheduleAppointment(doctorId, patientId, startTime, endTime);
+                                Console.WriteLine("Appointment scheduled successfully.");
+                                break;
+
+                            case "4": // List Appointments
+                                var appointments = AppointmentScheduler.GetAppointments();
+                                if (appointments.Any())
+                                {
+                                    Console.WriteLine("Scheduled Appointments:");
+                                    foreach (var appointment in appointments)
+                                    {
+                                        Console.WriteLine($"Appointment ID: {appointment.AppointmentId}, Doctor ID: {appointment.DoctorID}, Patient ID: {appointment.PatientID}");
+                                        Console.WriteLine($"Start Time: {appointment.StartTime}, End Time: {appointment.EndTime}");
+                                        Console.WriteLine(new string('-', 30));
+                                    }
+                                }
+                                else
+                                {
+                                    Console.WriteLine("No appointments scheduled.");
+                                }
+                                Console.WriteLine("Press any key to return to the menu.");
+                                Console.ReadKey();
+                                break;
+
+                            case "5": // Cancel Appointment
+                                Console.Write("Enter Appointment ID to cancel: ");
+                                if (int.TryParse(Console.ReadLine(), out int appointmentId))
+                                {
+                                    try
+                                    {
+                                        AppointmentScheduler.CancelAppointment(appointmentId);
+                                        Console.WriteLine("Appointment canceled successfully.");
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Console.WriteLine($"Error: {ex.Message}");
+                                    }
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Invalid Appointment ID.");
+                                }
+                                Console.WriteLine("Press any key to return to the menu.");
+                                Console.ReadKey();
+                                break;
+
+                            case "6": // Exit
+                                Console.WriteLine("Exiting Appointment Scheduling System.");
+                                break;
+
+                            default:
+                                Console.WriteLine("Invalid choice. Please select a valid option.");
                                 break;
                         }
                         break;
+    
 
-                    case "6":
+                    case "5":
                         Console.WriteLine("Exiting Nurse Menu.");
                         Environment.Exit(0);
                         break;
