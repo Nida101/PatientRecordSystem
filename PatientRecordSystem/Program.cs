@@ -41,13 +41,9 @@ void Login()
 void Logout(string username, string password)
 {
     Console.Write("Do you want to logout? --> ");
-    if (Console.ReadLine().ToLower() == "no")
+    if (Console.ReadLine().ToLower() == "yes")
     {
         AuthenticatorManager.Logout();
-    }
-    else
-    {
-        AuthenticatorManager.AttemptLogin(username, password);
     }
 }
 

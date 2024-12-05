@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace PatientRecordSystem
@@ -15,16 +16,18 @@ namespace PatientRecordSystem
         public string ContactDetails { get; set; }
         public string NHSNumber { get; set; }
         public string HospitalNumber { get; set; }
-        public int PatientID { get; set; }
-        public List<Notes> Note { get; set; } = new List<Notes>();
+        //public int PatientID { get; set; }
 
-        public static List<Patient> PatientList = new List<Patient>();
 
         public Patient() { } // Parameterless constructor (implicitly added if not explicitly defined)
+        internal List<Notes> note { get; set; } = new List<Notes>();
+        public static List<Patient> PatientList = new List<Patient>();
+
+
 
         public Patient(int patientId, string firstName, string lastName) // Optional constructor for initialization
         {
-            PatientID = patientId;
+            //PatientID = patientId;
             FirstName = firstName;
             LastName = lastName;
         }
@@ -90,9 +93,30 @@ namespace PatientRecordSystem
             return parsedDate;
         }
 
+        public List<Patient> DeserializePatients(string json)
+        {
+            try
+            {
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                    WriteIndented = true
+                };
+
+                var patients = JsonSerializer.Deserialize<List<Patient>>(json, options);
+
+                return patients;
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"Error deserializing patients: {ex.Message}");
+                return null;
+            }
+        }
+
         internal static void Add(Patient patient)
         {
             throw new NotImplementedException();
         }
-    } 
+    }
 }

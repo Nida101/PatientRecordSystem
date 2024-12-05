@@ -43,14 +43,14 @@ namespace PatientRecordSystem
     {
         internal static List<Appointment> appointments = new List<Appointment>();
 
-        internal static bool ScheduleAppointment(int DoctorID, int PatientID, DateTime startTime, DateTime endTime)
+        internal static bool ScheduleAppointment(int DoctorID, DateTime startTime, DateTime endTime)
         {
             if (DoctorID <= 0) // ensure a valid doctor is assigned
             {
                 throw new ArgumentException("A valid doctor must be assigned to the appointment.");
             }
 
-            if (IsConflict(DoctorID, PatientID, startTime, endTime)) // prevent scheduling conflicts 
+            if (IsConflict(DoctorID, startTime, endTime)) // prevent scheduling conflicts 
             {
                 throw new InvalidOperationException("The appointment conflicts with an existing schedule.");
             }
@@ -59,7 +59,7 @@ namespace PatientRecordSystem
             {
                 AppointmentId = GeneratedAppointmentID(),
                 DoctorID = DoctorID,
-                PatientID = PatientID,
+                //PatientID = PatientID,
                 StartTime = startTime,
                 EndTime = endTime
             };
@@ -68,10 +68,10 @@ namespace PatientRecordSystem
             return true;
         }
 
-        private static bool IsConflict(int DoctorID, int PatientID, DateTime startTime, DateTime endTime)
+        private static bool IsConflict(int DoctorID, DateTime startTime, DateTime endTime)
         {
             return appointments.Any(a =>
-                (a.DoctorID == DoctorID || a.PatientID == PatientID) &&
+                (a.DoctorID == DoctorID) &&
                 ((startTime >= a.StartTime && startTime < a.EndTime) ||
                  (endTime > a.StartTime && endTime <= a.EndTime) ||
                  (startTime <= a.StartTime && endTime >= a.EndTime)));

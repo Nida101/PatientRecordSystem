@@ -53,7 +53,7 @@ namespace PatientRecordSystem
             Console.WriteLine("5. Exit");
 
             Console.Write("Enter your choice: ");
-            string choice = Console.ReadLine(); 
+            string choice = Console.ReadLine();
 
             NurseMenu(choice);
             return choice;
@@ -248,20 +248,8 @@ namespace PatientRecordSystem
                                 break;
 
                             case "2": // Add Patient
-                                Console.Write("Enter Patient ID: ");
-                                if (int.TryParse(Console.ReadLine(), out int patientId))
-                                {
-                                    Console.Write("Enter Patient Name: ");
-                                    string patientName = Console.ReadLine();
-                                    Patient.Add(new Patient { PatientID = patientId });
-                                    Console.WriteLine("Patient added successfully.");
-                                }
-                                else
-                                {
-                                    Console.WriteLine("Invalid ID. Patient not added.");
-                                }
-                                Console.WriteLine("Press any key to return to the menu.");
-                                Console.ReadKey();
+                                Console.Write("INCOMPLETE ");
+                                
                                 break;
 
                             case "3": // Schedule Appointment
@@ -269,12 +257,6 @@ namespace PatientRecordSystem
                                 while (!int.TryParse(Console.ReadLine(), out doctorId))
                                 {
                                     Console.WriteLine("Invalid input. Please enter a valid Doctor ID.");
-                                }
-
-                                Console.Write("Enter Patient ID: ");
-                                while (!int.TryParse(Console.ReadLine(), out patientId))
-                                {
-                                    Console.WriteLine("Invalid input. Please enter a valid Patient ID.");
                                 }
 
                                 Console.Write("Enter Start Time (yyyy-MM-dd HH:mm): ");
@@ -291,7 +273,7 @@ namespace PatientRecordSystem
                                     Console.WriteLine("Invalid input. Please enter a valid date and time.");
                                 }
 
-                                AppointmentScheduler.ScheduleAppointment(doctorId, patientId, startTime, endTime);
+                                AppointmentScheduler.ScheduleAppointment(doctorId, startTime, endTime);
                                 Console.WriteLine("Appointment scheduled successfully.");
                                 break;
 
@@ -346,7 +328,7 @@ namespace PatientRecordSystem
                                 break;
                         }
                         break;
-    
+
 
                     case "5":
                         Console.WriteLine("Exiting Nurse Menu.");
@@ -374,9 +356,9 @@ namespace PatientRecordSystem
             Console.WriteLine("5. Exit");
 
             Console.Write("Enter your choice: ");
-            string choice = Console.ReadLine(); 
+            string choice = Console.ReadLine();
 
-            DoctorMenu(choice); 
+            DoctorMenu(choice);
             return choice;
 
 
@@ -577,20 +559,8 @@ namespace PatientRecordSystem
                                 break;
 
                             case "2": // Add Patient
-                                Console.Write("Enter Patient ID: ");
-                                if (int.TryParse(Console.ReadLine(), out int patientId))
-                                {
-                                    Console.Write("Enter Patient Name: ");
-                                    string patientName = Console.ReadLine();
-                                    Patient.Add(new Patient { PatientID = patientId });
-                                    Console.WriteLine("Patient added successfully.");
-                                }
-                                else
-                                {
-                                    Console.WriteLine("Invalid ID. Patient not added.");
-                                }
-                                Console.WriteLine("Press any key to return to the menu.");
-                                Console.ReadKey();
+                                Console.Write("INCOMPLETE");
+                                
                                 break;
 
                             case "3": // Schedule Appointment
@@ -598,12 +568,6 @@ namespace PatientRecordSystem
                                 while (!int.TryParse(Console.ReadLine(), out doctorId))
                                 {
                                     Console.WriteLine("Invalid input. Please enter a valid Doctor ID.");
-                                }
-
-                                Console.Write("Enter Patient ID: ");
-                                while (!int.TryParse(Console.ReadLine(), out patientId))
-                                {
-                                    Console.WriteLine("Invalid input. Please enter a valid Patient ID.");
                                 }
 
                                 Console.Write("Enter Start Time (yyyy-MM-dd HH:mm): ");
@@ -620,7 +584,7 @@ namespace PatientRecordSystem
                                     Console.WriteLine("Invalid input. Please enter a valid date and time.");
                                 }
 
-                                AppointmentScheduler.ScheduleAppointment(doctorId, patientId, startTime, endTime);
+                                AppointmentScheduler.ScheduleAppointment(doctorId, startTime, endTime);
                                 Console.WriteLine("Appointment scheduled successfully.");
                                 break;
 
@@ -631,7 +595,7 @@ namespace PatientRecordSystem
                                     Console.WriteLine("Scheduled Appointments:");
                                     foreach (var appointment in appointments)
                                     {
-                                        Console.WriteLine($"Appointment ID: {appointment.AppointmentId}, Doctor ID: {appointment.DoctorID}, Patient ID: {appointment.PatientID}");
+                                        Console.WriteLine($"Appointment ID: {appointment.AppointmentId}, Doctor ID: {appointment.DoctorID}");
                                         Console.WriteLine($"Start Time: {appointment.StartTime}, End Time: {appointment.EndTime}");
                                         Console.WriteLine(new string('-', 30));
                                     }
@@ -689,7 +653,7 @@ namespace PatientRecordSystem
             return response;
         }
 
-        
+
 
         internal string GetAdminMenuResponse()
         {
@@ -896,7 +860,7 @@ namespace PatientRecordSystem
             return response;
         }
 
-        
+
 
         internal static void DisplayPatientInfo(Patient patient)
         {
@@ -929,5 +893,3 @@ namespace PatientRecordSystem
         }
     }
 }
-
-
