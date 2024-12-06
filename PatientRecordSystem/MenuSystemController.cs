@@ -1,4 +1,4 @@
-﻿using PatientRecordSystem;
+using PatientRecordSystem;
 using PatientRecordSystem._2._Patient_Record_M;
 using System;
 using System.Collections.Generic;
@@ -12,6 +12,7 @@ namespace PatientRecordSystem
     internal class MenuSystemController
     {
         private static IEnumerable<object> users;
+        //var appointmentManager = new AppointmentManager();
 
         public MenuSystemController()
         {
@@ -227,6 +228,7 @@ namespace PatientRecordSystem
                         Console.Write("Select an option: ");
 
                         string appointmentChoice = Console.ReadLine();
+                        var appointmentManager = new AppointmentManager();
 
                         switch (appointmentChoice)
                         {
@@ -259,6 +261,15 @@ namespace PatientRecordSystem
                                     Console.WriteLine("Invalid input. Please enter a valid Doctor ID.");
                                 }
 
+                                Console.Write("Enter Patient NHS Number: ");
+                                string patientNHSNumber; // Change to string
+                                patientNHSNumber = Console.ReadLine(); // Read directly as string
+                                while (string.IsNullOrWhiteSpace(patientNHSNumber)) // Check for empty input
+                                {
+                                    Console.WriteLine("Invalid input. Please enter a valid Patient NHS Number.");
+                                    patientNHSNumber = Console.ReadLine();
+                                }
+
                                 Console.Write("Enter Start Time (yyyy-MM-dd HH:mm): ");
                                 DateTime startTime;
                                 while (!DateTime.TryParse(Console.ReadLine(), out startTime))
@@ -273,18 +284,19 @@ namespace PatientRecordSystem
                                     Console.WriteLine("Invalid input. Please enter a valid date and time.");
                                 }
 
-                                AppointmentScheduler.ScheduleAppointment(doctorId, startTime, endTime);
+                                appointmentManager.AddAppointment(doctorId, patientNHSNumber, startTime, endTime);
                                 Console.WriteLine("Appointment scheduled successfully.");
                                 break;
 
                             case "4": // List Appointments
-                                var appointments = AppointmentScheduler.GetAppointments();
+                                var AppointmentManager = new AppointmentManager();
+                                var appointments = AppointmentManager.ListAppointments();
                                 if (appointments.Any())
                                 {
                                     Console.WriteLine("Scheduled Appointments:");
                                     foreach (var appointment in appointments)
                                     {
-                                        Console.WriteLine($"Appointment ID: {appointment.AppointmentId}, Doctor ID: {appointment.DoctorID}, Patient ID: {appointment.PatientID}");
+                                        Console.WriteLine($"Appointment ID: {appointment.AppointmentId}, Doctor ID: {appointment.DoctorID}, Patient NHS Number: {appointment.PatientNHSNumber}");
                                         Console.WriteLine($"Start Time: {appointment.StartTime}, End Time: {appointment.EndTime}");
                                         Console.WriteLine(new string('-', 30));
                                     }
@@ -303,7 +315,7 @@ namespace PatientRecordSystem
                                 {
                                     try
                                     {
-                                        AppointmentScheduler.CancelAppointment(appointmentId);
+                                        appointmentManager.CancelAppointment(appointmentId);
                                         Console.WriteLine("Appointment canceled successfully.");
                                     }
                                     catch (Exception ex)
@@ -538,6 +550,7 @@ namespace PatientRecordSystem
                         Console.Write("Select an option: ");
 
                         string appointmentChoice = Console.ReadLine();
+                        var appointmentManager = new AppointmentManager();
 
                         switch (appointmentChoice)
                         {
@@ -563,11 +576,20 @@ namespace PatientRecordSystem
                                 
                                 break;
 
-                            case "3": // Schedule Appointment
+                            case "3": // Add Appointment
                                 Console.Write("Enter Doctor ID: ");
                                 while (!int.TryParse(Console.ReadLine(), out doctorId))
                                 {
                                     Console.WriteLine("Invalid input. Please enter a valid Doctor ID.");
+                                }
+
+                                Console.Write("Enter Patient NHS Number: ");
+                                string patientNHSNumber; // Change to string
+                                patientNHSNumber = Console.ReadLine(); // Read directly as string
+                                while (string.IsNullOrWhiteSpace(patientNHSNumber)) // Check for empty input
+                                {
+                                    Console.WriteLine("Invalid input. Please enter a valid Patient NHS Number.");
+                                    patientNHSNumber = Console.ReadLine();
                                 }
 
                                 Console.Write("Enter Start Time (yyyy-MM-dd HH:mm): ");
@@ -584,18 +606,19 @@ namespace PatientRecordSystem
                                     Console.WriteLine("Invalid input. Please enter a valid date and time.");
                                 }
 
-                                AppointmentScheduler.ScheduleAppointment(doctorId, startTime, endTime);
+                                appointmentManager.AddAppointment(doctorId, patientNHSNumber, startTime, endTime);
                                 Console.WriteLine("Appointment scheduled successfully.");
                                 break;
 
                             case "4": // List Appointments
-                                var appointments = AppointmentScheduler.GetAppointments();
+                                var AppointmentManager = new AppointmentManager();
+                                var appointments = AppointmentManager.ListAppointments();
                                 if (appointments.Any())
                                 {
                                     Console.WriteLine("Scheduled Appointments:");
                                     foreach (var appointment in appointments)
                                     {
-                                        Console.WriteLine($"Appointment ID: {appointment.AppointmentId}, Doctor ID: {appointment.DoctorID}");
+                                        Console.WriteLine($"Appointment ID: {appointment.AppointmentId}, Doctor ID: {appointment.DoctorID}, Patient NHS Number: {appointment.PatientNHSNumber}");
                                         Console.WriteLine($"Start Time: {appointment.StartTime}, End Time: {appointment.EndTime}");
                                         Console.WriteLine(new string('-', 30));
                                     }
@@ -614,7 +637,7 @@ namespace PatientRecordSystem
                                 {
                                     try
                                     {
-                                        AppointmentScheduler.CancelAppointment(appointmentId);
+                                        appointmentManager.CancelAppointment(appointmentId);
                                         Console.WriteLine("Appointment canceled successfully.");
                                     }
                                     catch (Exception ex)
@@ -827,13 +850,14 @@ namespace PatientRecordSystem
                         Console.WriteLine(new string('-', 50));
                         Console.WriteLine("LIST APPOINTMENTS");
                         Console.WriteLine(new string('-', 50));
-                        var appointments = AppointmentScheduler.GetAppointments();
+                        var appointmentManager = new AppointmentManager();
+                        var appointments = appointmentManager.ListAppointments();
                         if (appointments.Any())
                         {
                             Console.WriteLine("Scheduled Appointments:");
                             foreach (var appointment in appointments)
                             {
-                                Console.WriteLine($"Appointment ID: {appointment.AppointmentId}, Doctor ID: {appointment.DoctorID}, Patient ID: {appointment.PatientID}");
+                                Console.WriteLine($"Appointment ID: {appointment.AppointmentId}, Doctor ID: {appointment.DoctorID}");
                                 Console.WriteLine($"Start Time: {appointment.StartTime}, End Time: {appointment.EndTime}");
                                 Console.WriteLine(new string('-', 30));
                             }
