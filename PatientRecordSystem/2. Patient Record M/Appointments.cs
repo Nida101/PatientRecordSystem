@@ -1,108 +1,89 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection.Metadata.Ecma335;
 
 namespace PatientRecordSystem
 {
-    internal class Appointment //2.2
+    public class Appointment
     {
-        public DateTime AppointmentDate { get; set; }
         public int AppointmentId { get; set; }
-        public string GetAppointments {  get; set; }
-        public string DoctorName { get; set; }
         public int DoctorID { get; set; }
-        public string Department { get; set; }
-        public bool AppointmentCancelled { get; set; }
-        public int PatientID { get; set; }
+        public string PatientNHSNumber { get; set; } // Changed from int PatientID to string PatientNHSNumber
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
+        public bool IsCancelled { get; set; } // To track if the appointment is cancelled
 
-
-        public List<Appointment> Appointments { get; set; } = new List<Appointment>(); //Adding a property for Appointment
-
-
-        internal static void Add(Appointment appointment)
+        public Appointment(int appointmentId, int doctorId, string patientNHSNumber, DateTime startTime, DateTime endTime)
         {
-            throw new NotImplementedException();
-        }
-
-        internal static object FirstOrDefault(Func<object, bool> value)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal static void Remove(object appointment)
-        {
-            throw new NotImplementedException();
+            AppointmentId = appointmentId;
+            DoctorID = doctorId;
+            PatientNHSNumber = patientNHSNumber; // Set the NHS number
+            StartTime = startTime;
+            EndTime = endTime;
+            IsCancelled = false; 
         }
     }
 
-    internal class AppointmentScheduler
+    internal class AppointmentManager
     {
-        internal static List<Appointment> appointments = new List<Appointment>();
+        private List<Appointment> appointments = new List<Appointment>();
+        private int appointmentCounter = 0; // Counter for generating unique appointment IDs
 
-        internal static bool ScheduleAppointment(int DoctorID, DateTime startTime, DateTime endTime)
+        // Method to add a new appointment
+        public bool AddAppointment(int doctorId, string patientNHSNumber, DateTime startTime, DateTime endTime) 
         {
-            if (DoctorID <= 0) // ensure a valid doctor is assigned
+            // Validate inputs
+            if (doctorId <= 0 || string.IsNullOrWhiteSpace(patientNHSNumber))
             {
-                throw new ArgumentException("A valid doctor must be assigned to the appointment.");
+                throw new ArgumentException("Doctor ID must be valid and Patient NHS Number cannot be empty.");
             }
 
-            if (IsConflict(DoctorID, startTime, endTime)) // prevent scheduling conflicts 
+            if (startTime >= endTime)
+            {
+                throw new ArgumentException("Start time must be before end time.");
+            }
+
+            if (IsConflict(doctorId, startTime, endTime))
             {
                 throw new InvalidOperationException("The appointment conflicts with an existing schedule.");
             }
 
-            var appointment = new Appointment // schedule the appointment
-            {
-                AppointmentId = GeneratedAppointmentID(),
-                DoctorID = DoctorID,
-                //PatientID = PatientID,
-                StartTime = startTime,
-                EndTime = endTime
-            };
-
+            // Create a new appointment
+            var appointment = new Appointment(++appointmentCounter, doctorId, patientNHSNumber, startTime, endTime);
             appointments.Add(appointment);
             return true;
         }
 
-        private static bool IsConflict(int DoctorID, DateTime startTime, DateTime endTime)
+        // Method to check for scheduling conflicts
+        private bool IsConflict(int doctorId, DateTime startTime, DateTime endTime)
         {
             return appointments.Any(a =>
-                (a.DoctorID == DoctorID) &&
-                ((startTime >= a.StartTime && startTime < a.EndTime) ||
-                 (endTime > a.StartTime && endTime <= a.EndTime) ||
-                 (startTime <= a.StartTime && endTime >= a.EndTime)));
+                a.DoctorID == doctorId &&
+                ((startTime < a.EndTime && endTime > a.StartTime))); // Check for overlap
         }
 
-
-        public static int GeneratedAppointmentID()
-        {
-            return new Random().Next(1, 10000); // random ID generator
-        }
-
-        internal static void ListAppointment()
+        // Method to list all appointments
+        public List<Appointment> ListAppointments()
         {
             if (appointments.Count == 0)
             {
                 Console.WriteLine("No appointments scheduled.");
-                return;
+                return new List<Appointment>(); // Return an empty list
             }
 
             foreach (var appointment in appointments)
             {
-                Console.WriteLine($"Appointment ID: {appointment.AppointmentId}, Doctor ID: {appointment.DoctorID}, Patient ID: {appointment.PatientID}, Start: {appointment.StartTime}, End: {appointment.EndTime}");
+                Console.WriteLine($"Appointment ID: {appointment.AppointmentId}, Doctor ID: {appointment.DoctorID}, Patient NHS Number: {appointment.PatientNHSNumber}, Start: {appointment.StartTime}, End: {appointment.EndTime}, Cancelled: {appointment.IsCancelled}");
             }
+
+            return new List<Appointment>(appointments); // Return a copy of the list
         }
 
-        internal static void AddAppointment(Appointment appointment)
-        {
-            throw new NotImplementedException();
-        }
 
-        internal static void CancelAppointment(int appointmentId) // New method added
+
+        // Method to cancel an appointment
+        public void CancelAppointment(int appointmentId)
         {
             var appointment = appointments.FirstOrDefault(a => a.AppointmentId == appointmentId);
             if (appointment == null)
@@ -110,13 +91,8 @@ namespace PatientRecordSystem
                 throw new ArgumentException($"No appointment found with ID {appointmentId}.");
             }
 
-            appointments.Remove(appointment);
-            Console.WriteLine($"Appointment with ID {appointmentId} has been canceled successfully.");
-        }
-
-        public static List<Appointment> GetAppointments()
-        {
-            return new List<Appointment>(appointments); // Return a copy of the appointments list
+            appointment.IsCancelled = true; // Mark as cancelled
+            Console.WriteLine($"Appointment with ID {appointmentId} has been cancelled successfully.");
         }
     }
 }
