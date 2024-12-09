@@ -1,0 +1,34 @@
+[
+  {
+    "Name": "Jackie Adams",
+    "Email": "doctor1@hospital.com",
+    "PasswordHash": "fGoYCzaJagqMAnh\u002B6vsOTA==",
+    "Role": 1,
+    "UserType": "Standard",
+    "IsEnabled": true
+  },
+  {
+    "Name": "Ken Dawson",
+    "Email": "admin1@hospital.com",
+    "PasswordHash": "bLdfZSqbUnmOts8iAQV8cw==",
+    "Role": 0,
+    "UserType": "Standard",
+    "IsEnabled": true
+  },
+  {
+    "Name": "Siobhan McHugh",
+    "Email": "nurse1@hospital.com",
+    "PasswordHash": "gZsGQ9a4ncm1ef38kJTyjg==",
+    "Role": 2,
+    "UserType": "Standard",
+    "IsEnabled": true
+  },
+  {
+    "Name": "Sara Smith",
+    "Email": "doctor2@hospital.com",
+    "PasswordHash": "2w7dBKqsRQb37asDrIVdVg==",
+    "Role": 0,
+    "UserType": "doctor",
+    "IsEnabled": true
+  }
+]

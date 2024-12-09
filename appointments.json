@@ -1,0 +1,18 @@
+[
+  {
+    "AppointmentId": 1,
+    "DoctorID": 2,
+    "PatientNHSNumber": "nhs01",
+    "StartTime": "2024-12-24T08:00:00",
+    "EndTime": "2024-12-24T09:00:00",
+    "IsCancelled": false
+  },
+  {
+    "AppointmentId": 1,
+    "DoctorID": 1,
+    "PatientNHSNumber": "nhs01",
+    "StartTime": "2024-12-24T07:00:00",
+    "EndTime": "2024-12-24T08:00:00",
+    "IsCancelled": false
+  }
+]
